@@ -32,12 +32,24 @@ class gat2vec(object):
     '''
     load the adjacency list
     '''
-    def _get_graph(self, gtype='graph'):
+    def _get_graph(self, gtype='graph'):        
+     
+        fname_struct = self.dataset_dir + self.dataset + '_'+ gtype + '.edgelist'
+        print fname_struct
+        G = graph.load_edgelist(fname_struct,False,True)
+        print("Number of nodes: {}".format(len(G.nodes())))
+
+        return G
+        
+        """
         fname_struct = self.dataset_dir + self.dataset + '_'+ gtype + '.adjlist'
         print fname_struct
         G = graph.load_adjacencylist(fname_struct)
         print("Number of nodes: {}".format(len(G.nodes())))
         return G
+        """
+
+        
 
     '''return random walks '''
     def _get_random_walks(self, G, num_walks, wlength, gtype='graph'):
@@ -69,7 +81,7 @@ class gat2vec(object):
 
 
     def train_gat2vec(self, data, nwalks, wlength, dsize, wsize, output):
-        print "Random Walks on Structural Graph"
+        print "Weighted Random Walks on Structural Graph"
         walks_structure = self._get_random_walks(self.Gs, nwalks, wlength)
         num_str_nodes = len(self.Gs.nodes())
         if self.label:
@@ -105,7 +117,7 @@ class gat2vec(object):
     def train_gat2vec_bip(self, data, nwalks, wlength, dsize, wsize, output):
         print "Learning Representation on Bipartite Graph"
         num_str_nodes = len(self.Gs.nodes())
-        print "Random Walking..."
+        print "Weighted Random Walking..."
         walks_attribute = self._get_random_walks(self.Ga, nwalks, wlength * 2)
         filter_walks = self._filter_walks(walks_attribute, num_str_nodes)
         fname = "./embeddings/" + self.dataset + "_gat2vec_bip.emb"
